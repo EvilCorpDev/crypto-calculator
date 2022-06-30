@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://androidghost77:<password>@cluster0.lhkyq3i.mongodb.net/?retryWrites=true&w=majority
