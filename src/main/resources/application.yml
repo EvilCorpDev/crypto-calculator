@@ -1,4 +1,23 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://androidghost77:<password>@cluster0.lhkyq3i.mongodb.net/?retryWrites=true&w=majority
+      uri: "mongodb+srv://<username>:<password>@cluster0.lhkyq3i.mongodb.net/<db-name>?retryWrites=true&w=majority"
+
+server:
+  port: 80
+  servlet:
+    context-path: /crypto-calc
+
+logging:
+  level:
+    root: info
+    org.springframework.web: info
+  logback:
+    rollingpolicy:
+      max-history: 7
+  file:
+    name: "./logs/crypto.log"
+
+jwt:
+  secret: "4_WwR3LEUgLb*R2db49Aj7AzppZWLPiovsdfnlkg3edcLJBGVR#&BVP9eqne123fsdghtew5"
+  expirationInMs: 1800000

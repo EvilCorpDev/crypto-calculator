@@ -3,7 +3,7 @@ package com.androidghost77.cryptocalculator.security
 import com.androidghost77.cryptocalculator.security.model.UserPrincipal
 import com.androidghost77.cryptocalculator.services.Logging
 import io.jsonwebtoken.*
-import io.jsonwebtoken.io.Decoders
+import io.jsonwebtoken.io.Encoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.security.core.Authentication
 import java.security.Key
@@ -18,7 +18,7 @@ class JwtTokenProvider(
         val userPrincipal: UserPrincipal = authentication.principal as UserPrincipal
         val issuedAt = Date()
         val expirationDate = Date(issuedAt.time + jwtExpirationInMs)
-        val keyBytes = Decoders.BASE64.decode(jwtSecret)
+        val keyBytes = Encoders.BASE64.encode(jwtSecret.toByteArray()).toByteArray()
         val key: Key = Keys.hmacShaKeyFor(keyBytes)
         return Jwts.builder()
             .setSubject(userPrincipal.user.id)
@@ -29,7 +29,7 @@ class JwtTokenProvider(
     }
 
     fun getUserIdFromJWT(token: String?): String {
-        val keyBytes = Decoders.BASE64.decode(jwtSecret)
+        val keyBytes = Encoders.BASE64.encode(jwtSecret.toByteArray()).toByteArray()
         val key: Key = Keys.hmacShaKeyFor(keyBytes)
         val tokenBody = Jwts.parserBuilder()
             .setSigningKey(key)
@@ -40,9 +40,11 @@ class JwtTokenProvider(
     }
 
     fun validateToken(token: String?): Boolean {
+        val keyBytes = Encoders.BASE64.encode(jwtSecret.toByteArray()).toByteArray()
+        val key: Key = Keys.hmacShaKeyFor(keyBytes)
         try {
             Jwts.parserBuilder()
-                .setSigningKey(jwtSecret.toByteArray())
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
             return true
