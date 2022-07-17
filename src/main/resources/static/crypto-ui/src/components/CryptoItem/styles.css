@@ -1,0 +1,33 @@
+.cryptoItem {
+    background: #1B263B;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 15px;
+    display: flex;
+}
+
+.cryptoItem:hover {
+    box-shadow: rgb(38, 57, 77) 0 20px 30px -10px;
+}
+
+.coinLogo {
+    padding: 39px 0;
+    margin: auto;
+    height: 50px;
+    width: 50px;
+}
+
+.coinLogo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.w80 {
+    width: 80%;
+    margin-left: 20px;
+}
+
+.w20 {
+    width: 20%;
+}
