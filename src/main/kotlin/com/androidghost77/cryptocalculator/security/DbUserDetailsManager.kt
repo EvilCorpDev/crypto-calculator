@@ -55,4 +55,6 @@ class DbUserDetailsManager(
         val updatedUser = userDetails.user.copy(role = UserRole.ADMIN)
         updateUser(UserPrincipal(updatedUser, emptyList()))
     }
+
+    fun getAllUsers(): List<User> = userRepo.findAll()
 }

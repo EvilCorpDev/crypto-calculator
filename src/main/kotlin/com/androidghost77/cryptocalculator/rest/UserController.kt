@@ -1,10 +1,12 @@
 package com.androidghost77.cryptocalculator.rest
 
 import com.androidghost77.cryptocalculator.enums.UserRole
+import com.androidghost77.cryptocalculator.models.binance.BinanceToken
 import com.androidghost77.cryptocalculator.models.UserDto
 import com.androidghost77.cryptocalculator.repos.entities.User
 import com.androidghost77.cryptocalculator.security.DbUserDetailsManager
 import com.androidghost77.cryptocalculator.security.model.UserPrincipal
+import com.androidghost77.cryptocalculator.services.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -16,6 +18,7 @@ import java.util.*
 class UserController(
     private val userDetailsManager: DbUserDetailsManager,
     private val passwordEncoder: BCryptPasswordEncoder,
+    private val userService: UserService,
 ) {
 
     @PostMapping
@@ -29,6 +32,20 @@ class UserController(
             role = UserRole.USER
         )
         userDetailsManager.createUser(UserPrincipal(user, emptyList()))
+    }
+
+    @GetMapping("/current")
+    fun getCurrentUser(): UserDto = userService.getCurrentUserDto()
+
+    @PostMapping("/token")
+    fun connectToBinance(@RequestBody tokenDto: BinanceToken) {
+        val dbUser = userDetailsManager.loadUserById(userService.getCurrentUser().id) as UserPrincipal
+        val updatedUser = UserPrincipal(
+            dbUser.user.copy(binanceToken = tokenDto.apiToken, secretBinanceKey = tokenDto.secretKey),
+            emptyList()
+        )
+
+        userDetailsManager.updateUser(updatedUser)
     }
 
     @PostMapping("/{username}/role")

@@ -12,6 +12,11 @@ const Header = () => {
                 <div className="link">
                     <Link to="/login">Login</Link>
                 </div>
+                <div className="link smallImage">
+                    <Link to="/profile">
+                        <img src="user-icon.png" alt="user icon"/>
+                    </Link>
+                </div>
             </div>
         </div>
     );

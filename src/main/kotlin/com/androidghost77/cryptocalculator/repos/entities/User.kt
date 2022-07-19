@@ -11,4 +11,6 @@ data class User(
     val passwordHash: String,
     val email: String,
     val role: UserRole,
+    val binanceToken: String? = null,
+    val secretBinanceKey: String? = null,
 )

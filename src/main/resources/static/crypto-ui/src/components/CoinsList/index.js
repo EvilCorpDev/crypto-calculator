@@ -1,12 +1,18 @@
 import "./styles.css"
 import CryptoItem from "../CryptoItem";
+import useFetch from "../../useFetch";
+import Cookies from "universal-cookie/lib";
 
 const CoinsList = () => {
+    const cookies = new Cookies();
+    const {data: coins, error, pending} = useFetch("/coins/price", {'Authorization':  `Bearer ${cookies.get('token')}`});
+
     return (
         <div className="mainContent">
             <div className="cryptoList">
-                <CryptoItem name="Bitcoin" price="44,300" amount="0.15"/>
-                <CryptoItem name="Ethereum" price="2300" amount="3.15"/>
+                {coins && coins.map((item, idx) => (
+                    <CryptoItem key={idx} name={item.coin.name} price={item.averagePrice} amount={item.amount}/>
+                ))}
             </div>
         </div>
     )

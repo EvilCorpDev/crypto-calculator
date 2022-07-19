@@ -27,6 +27,7 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+	implementation("io.github.binance:binance-connector-java:1.7.0")
 	implementation("org.mapstruct:mapstruct:1.5.2.Final")
 	kapt("org.mapstruct:mapstruct-processor:1.5.2.Final")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

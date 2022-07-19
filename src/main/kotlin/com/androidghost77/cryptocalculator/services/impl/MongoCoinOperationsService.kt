@@ -23,4 +23,13 @@ class MongoCoinOperationsService(
         val entity: CoinOperation = coinOperationsMapper.toEntity(coinOperationDto, user, OperationType.SELL)
         coinOperationsRepo.save(entity)
     }
+
+    override fun saveCoinOperation(coinOperation: CoinOperation) {
+        coinOperationsRepo.save(coinOperation)
+    }
+
+    override fun getLatestOperationTime(user: User): Long =
+        coinOperationsRepo.findFirstByUserId(user.id)
+            .map { it.date.toInstant().epochSecond }
+            .orElse(0L)
 }
