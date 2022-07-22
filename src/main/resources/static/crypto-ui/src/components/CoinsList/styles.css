@@ -5,3 +5,17 @@
     height: 100%;
     padding-top: 100px;
 }
+
+.cryptoList a {
+    text-decoration: none;
+    color: #E0E1DD;
+}
+
+.refreshList {
+    position: absolute;
+    right: 0;
+}
+
+.smallImage:hover {
+    cursor: pointer;
+}

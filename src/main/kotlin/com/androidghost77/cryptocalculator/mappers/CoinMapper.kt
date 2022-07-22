@@ -8,4 +8,5 @@ import org.mapstruct.Mapper
 interface CoinMapper {
 
     fun coinToCoinDto(coin: Coin): CoinDto
+    fun coinDtoToCoin(coin: CoinDto): Coin
 }

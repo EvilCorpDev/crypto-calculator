@@ -1,0 +1,18 @@
+.orderHistory {
+    width: 50%;
+    margin: auto;
+    color: #E0E1DD;
+    height: 100%;
+    padding-top: 100px;
+}
+
+.order {
+    background: #1B263B;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 15px;
+}
+
+.order:hover {
+    box-shadow: rgb(38, 57, 77) 0 20px 30px -10px;
+}

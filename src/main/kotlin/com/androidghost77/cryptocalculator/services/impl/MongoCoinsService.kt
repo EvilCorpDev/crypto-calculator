@@ -26,28 +26,27 @@ class MongoCoinsService(
         coinRepository.findAll()
             .map { coinMapper.coinToCoinDto(it) }
 
-    override fun getCoinSymbols(): Map<String, CoinDto> =
+    override fun getCoinSymbols(): Map<String, Coin> =
         coinRepository.findAll()
-            .map { coinMapper.coinToCoinDto(it) }
             .associateBy { it.symbol }
 
     override fun getCoinsAveragePrice(user: User): List<CoinPriceDto> {
         val operations: List<CoinOperation> = coinOperationRepo.findAll()
-        val coinPrices = mutableMapOf<String, Pair<BigDecimal, BigDecimal>>()
+        val coinPrices = mutableMapOf<Coin, Pair<BigDecimal, BigDecimal>>()
         operations.forEach { item ->
-            coinPrices[item.name] = Pair(
-                (coinPrices[item.name]?.first ?: BigDecimal.ZERO) + getValueByOperation(
+            coinPrices[item.coin] = Pair(
+                (coinPrices[item.coin]?.first ?: BigDecimal.ZERO) + getValueByOperation(
                     item.type,
                     item.price * item.amount
                 ),
-                (coinPrices[item.name]?.second ?: BigDecimal.ZERO) + getValueByOperation(item.type, item.amount)
+                (coinPrices[item.coin]?.second ?: BigDecimal.ZERO) + getValueByOperation(item.type, item.amount)
             )
         }
         return coinPrices.map { it.key to Pair(it.value.first / it.value.second, it.value.second) }
-            .map { CoinPriceDto(CoinDto(it.first, "", ""), it.second.second, it.second.first) }
+            .map { CoinPriceDto(coinMapper.coinToCoinDto(it.first), it.second.second, it.second.first) }
     }
 
-    override fun addCoin(binanceAsset: BinanceAsset): CoinDto {
+    override fun addCoin(binanceAsset: BinanceAsset): Coin {
         if (coinRepository.findByName(binanceAsset.assetFullName).isPresent) {
             throw CoinAlreadyExistsException("Coin ${binanceAsset.assetFullName} already exists")
         }
@@ -59,12 +58,21 @@ class MongoCoinsService(
             logo = "",
         )
 
-        return coinMapper.coinToCoinDto(coinRepository.save(coin))
+        return coinRepository.save(coin)
+    }
+
+    override fun getSymbolFromPair(pair: String): String {
+        val stableCoin = STABLE_COINS_LIST.first { pair.contains(it) }
+        return pair.substring(0, pair.length - stableCoin.length)
     }
 
     private fun getValueByOperation(type: OperationType, value: BigDecimal) =
         when (type) {
-            OperationType.BUY -> value
+            OperationType.BUY, OperationType.BUY_BY_FIAT -> value
             OperationType.SELL -> value * BigDecimal.valueOf(-1L)
         }
+
+    companion object {
+        val STABLE_COINS_LIST = listOf("USDT", "USDC", "BUSD")
+    }
 }

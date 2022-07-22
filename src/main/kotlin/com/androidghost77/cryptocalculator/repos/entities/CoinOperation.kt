@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 @Document
 data class CoinOperation(
     @field:Id val id: String,
-    val name: String,
+    val coin: Coin,
     val type: OperationType,
     val amount: BigDecimal,
     val price: BigDecimal,

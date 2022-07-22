@@ -4,4 +4,5 @@ data class CoinDto(
     val name: String,
     val symbol: String,
     val logo: String,
+    val id: String = "",
 )
