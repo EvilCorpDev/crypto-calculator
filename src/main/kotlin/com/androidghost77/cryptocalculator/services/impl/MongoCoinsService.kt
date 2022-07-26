@@ -2,9 +2,11 @@ package com.androidghost77.cryptocalculator.services.impl
 
 import com.androidghost77.cryptocalculator.enums.OperationType
 import com.androidghost77.cryptocalculator.exceptions.CoinAlreadyExistsException
+import com.androidghost77.cryptocalculator.exceptions.CoinNotFoundException
 import com.androidghost77.cryptocalculator.mappers.CoinMapper
 import com.androidghost77.cryptocalculator.models.CoinDto
 import com.androidghost77.cryptocalculator.models.CoinPriceDto
+import com.androidghost77.cryptocalculator.models.MyWallet
 import com.androidghost77.cryptocalculator.models.binance.BinanceAsset
 import com.androidghost77.cryptocalculator.repos.CoinOperationRepository
 import com.androidghost77.cryptocalculator.repos.CoinRepository
@@ -30,20 +32,32 @@ class MongoCoinsService(
         coinRepository.findAll()
             .associateBy { it.symbol }
 
-    override fun getCoinsAveragePrice(user: User): List<CoinPriceDto> {
+    override fun getCoinsAveragePrice(user: User): MyWallet {
         val operations: List<CoinOperation> = coinOperationRepo.findAll()
-        val coinPrices = mutableMapOf<Coin, Pair<BigDecimal, BigDecimal>>()
+        val coinPrices = mutableMapOf<Coin, CoinValue>()
         operations.forEach { item ->
-            coinPrices[item.coin] = Pair(
-                (coinPrices[item.coin]?.first ?: BigDecimal.ZERO) + getValueByOperation(
+            coinPrices[item.coin] = CoinValue(
+                (coinPrices[item.coin]?.totalMoneyValue ?: BigDecimal.ZERO) + getValueByOperation(
                     item.type,
                     item.price * item.amount
                 ),
-                (coinPrices[item.coin]?.second ?: BigDecimal.ZERO) + getValueByOperation(item.type, item.amount)
+                (coinPrices[item.coin]?.amount ?: BigDecimal.ZERO) + getValueByOperation(item.type, item.amount)
             )
         }
-        return coinPrices.map { it.key to Pair(it.value.first / it.value.second, it.value.second) }
-            .map { CoinPriceDto(coinMapper.coinToCoinDto(it.first), it.second.second, it.second.first) }
+        val totalMoneyValue: BigDecimal = coinPrices.values.sumOf { it.totalMoneyValue }
+        val averageCoinPrices: List<CoinPriceDto> =
+            coinPrices.map { it.key to Pair(it.value.totalMoneyValue / it.value.amount, it.value.amount) }
+                .map {
+                    CoinPriceDto(
+                        coinMapper.coinToCoinDto(it.first),
+                        it.second.second,
+                        it.second.second * it.second.first,
+                        it.second.first
+                    )
+                }
+                .sortedByDescending { it.totalValue }
+
+        return MyWallet(totalMoneyValue, averageCoinPrices.size, averageCoinPrices)
     }
 
     override fun addCoin(binanceAsset: BinanceAsset): Coin {
@@ -66,6 +80,9 @@ class MongoCoinsService(
         return pair.substring(0, pair.length - stableCoin.length)
     }
 
+    override fun findCoin(symbol: String): Coin =
+        coinRepository.findBySymbol(symbol).orElseThrow { CoinNotFoundException("Can't find coin $symbol") }
+
     private fun getValueByOperation(type: OperationType, value: BigDecimal) =
         when (type) {
             OperationType.BUY, OperationType.BUY_BY_FIAT -> value
@@ -76,3 +93,8 @@ class MongoCoinsService(
         val STABLE_COINS_LIST = listOf("USDT", "USDC", "BUSD")
     }
 }
+
+data class CoinValue(
+    val totalMoneyValue: BigDecimal,
+    val amount: BigDecimal,
+)

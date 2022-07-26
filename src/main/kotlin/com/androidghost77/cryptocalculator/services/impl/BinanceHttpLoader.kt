@@ -90,7 +90,7 @@ class BinanceHttpLoader(
         user: User,
         startTime: ZonedDateTime
     ): List<CoinOperation> {
-        val between: Long = ChronoUnit.MONTHS.between(ZonedDateTime.now(), startTime)
+        val between: Long = ChronoUnit.MONTHS.between(startTime, ZonedDateTime.now())
         var startDateTime = startTime
         val result = mutableListOf<BinancePayment>()
         for (i in 0..between step 3) {
@@ -98,8 +98,8 @@ class BinanceHttpLoader(
                 client.createFiat().payments(
                     linkedMapOf(
                         "transactionType" to "0",
-                        "beginTime" to startTime,
-                        "endTime" to getEndTime(startDateTime)
+                        "beginTime" to startDateTime.toInstant().toEpochMilli(),
+                        "endTime" to getEndTime(startDateTime).toInstant().toEpochMilli()
                     )
                 )
             )
@@ -112,7 +112,7 @@ class BinanceHttpLoader(
 
     /***
      * klines has next structure:
-     *  [
+     *  [[
      *     1499040000000,      // Open time
      *     "0.01634790",       // Open
      *     "0.80000000",       // High
@@ -125,7 +125,7 @@ class BinanceHttpLoader(
      *     "1756.87402397",    // Taker buy base asset volume
      *     "28.46694368",      // Taker buy quote asset volume
      *     "17928899.62484339" // Ignore.
-     *  ]
+     *  ]]
      * So we get highest(2 index) and lowest (third index) price and get average of those
      */
     override fun getAssetPrice(client: SpotClient, symbol: String, date: ZonedDateTime): BigDecimal {
@@ -137,8 +137,8 @@ class BinanceHttpLoader(
                 "endTime" to date.plusDays(1).toInstant().toEpochMilli(),
             )
         )
-        val result: Array<BigDecimal> = objectMapper.readValue(klines)
-        return if (result.isNotEmpty()) (result[2] + result[3]) / BigDecimal(2) else BigDecimal(-1)
+        val result: Array<Array<BigDecimal>> = objectMapper.readValue(klines)
+        return if (result.isNotEmpty()) (result[0][2] + result[0][3]) / BigDecimal(2) else BigDecimal(-1)
     }
 
     private fun getEndTime(startDateTime: ZonedDateTime): ZonedDateTime {
@@ -166,7 +166,7 @@ class BinanceHttpLoader(
                 coin = coin,
                 type = OperationType.BUY_BY_FIAT,
                 amount = it.obtainAmount,
-                price = getAssetPrice(client, coin.symbol, date),
+                price = getAssetPrice(client, "${coin.symbol}USDT", date),
                 date = date,
                 user = user,
             )

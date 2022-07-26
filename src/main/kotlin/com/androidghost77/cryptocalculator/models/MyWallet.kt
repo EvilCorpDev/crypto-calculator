@@ -2,9 +2,8 @@ package com.androidghost77.cryptocalculator.models
 
 import java.math.BigDecimal
 
-data class CoinPriceDto(
-    val coin: CoinDto,
-    val amount: BigDecimal,
+data class MyWallet(
     val totalValue: BigDecimal,
-    val averagePrice: BigDecimal,
+    val numberOfCoins: Int,
+    val coins: List<CoinPriceDto>,
 )

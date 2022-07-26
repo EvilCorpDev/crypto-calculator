@@ -23,7 +23,7 @@ const useFetch = (url, headers = {}) => {
         })
     }, [])
 
-    return {data, error, pending};
+    return {data, setData, error, pending};
 }
 
 export default useFetch

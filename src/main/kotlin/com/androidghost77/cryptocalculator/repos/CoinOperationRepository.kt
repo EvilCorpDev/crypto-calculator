@@ -7,6 +7,6 @@ import java.util.*
 
 interface CoinOperationRepository : MongoRepository<CoinOperation, String> {
     fun findByCoinSymbol(symbol: String): List<CoinOperation>
-    fun findFirstByUserIdOrderByDate(userId: String): Optional<CoinOperation>
-    fun findFirstByUserIdAndTypeOrderByDate(userId: String, type: OperationType): Optional<CoinOperation>
+    fun findFirstByUserIdOrderByDateDesc(userId: String): Optional<CoinOperation>
+    fun findFirstByUserIdAndTypeOrderByDateDesc(userId: String, type: OperationType): Optional<CoinOperation>
 }

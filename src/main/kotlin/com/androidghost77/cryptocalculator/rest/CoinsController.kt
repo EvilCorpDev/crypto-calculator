@@ -1,6 +1,6 @@
 package com.androidghost77.cryptocalculator.rest
 
-import com.androidghost77.cryptocalculator.models.CoinPriceDto
+import com.androidghost77.cryptocalculator.models.MyWallet
 import com.androidghost77.cryptocalculator.services.CoinsService
 import com.androidghost77.cryptocalculator.services.UserService
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,5 +15,5 @@ class CoinsController(
 ) {
 
     @GetMapping("/price")
-    fun getCoinAveragePrices(): List<CoinPriceDto> = coinsService.getCoinsAveragePrice(userService.getCurrentUser())
+    fun getCoinAveragePrices(): MyWallet = coinsService.getCoinsAveragePrice(userService.getCurrentUser())
 }

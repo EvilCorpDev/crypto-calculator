@@ -6,4 +6,5 @@ import java.util.Optional
 
 interface CoinRepository : MongoRepository<Coin, String> {
     fun findByName(name: String): Optional<Coin>
+    fun findBySymbol(symbol: String): Optional<Coin>
 }
