@@ -9,7 +9,7 @@
 /coverage
 
 # production
-/build
+/static/crypto-ui/build
 
 # misc
 .DS_Store
