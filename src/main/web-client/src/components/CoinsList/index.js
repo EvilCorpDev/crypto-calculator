@@ -41,7 +41,7 @@ const CoinsList = () => {
     return (
         <div className="mainContent">
             <div className="refreshList">
-                <img className="smallImage" src="reload.png" onClick={handleReloadClick} alt="Reload button"/>
+                <img className="smallImage" src="/reload.png" onClick={handleReloadClick} alt="Reload button"/>
             </div>
             <div className="Total data">
                 <h4>Total money: {myWallet && myWallet.totalValue}</h4>
