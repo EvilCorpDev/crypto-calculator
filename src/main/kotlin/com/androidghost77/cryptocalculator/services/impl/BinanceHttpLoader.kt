@@ -176,7 +176,7 @@ class BinanceHttpLoader(
     companion object : Logging
 }
 
-fun main() {
+fun test() {
     val client = SpotClientImpl(
         "jOGBu13eZWKXKxYr8iwobnvezs9ofH8USX8CMwkQzn8Qvp0Tdb1Z7S6Ss4rOyJ0P",
         "flOBRzMqU08vYr98yFoXNdgrXC0nylOmHrGD8HWDixgjv9ONAN0N7PlT7jOvdwLe"

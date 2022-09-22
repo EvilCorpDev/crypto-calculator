@@ -1,12 +1,12 @@
 spring:
   data:
     mongodb:
-      uri: "mongodb+srv://<username>:<password>@cluster0.lhkyq3i.mongodb.net/<db-name>?retryWrites=true&w=majority"
+      uri: "mongodb+srv://${DB_USERNAME:username}:${DB_PASSWORD:password}@cluster0.lhkyq3i.mongodb.net/${DB_NAME:db-name}?retryWrites=true&w=majority"
 
 server:
   port: 80
   servlet:
-    context-path: /crypto-calc
+    context-path: /
 
 logging:
   level:
